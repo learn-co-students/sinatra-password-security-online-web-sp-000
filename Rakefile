@@ -1,10 +1,8 @@
-ENV["SINATRA_ENV"] ||= "development"
+require "./config/environment"
+require "sinatra/activerecord/rake" 
+require "sinatra/activerecord/rake"
 
-require_relative './config/environment'
-require 'sinatra/activerecord/rake'
-
-# Type `rake -T` on your command line to see the available rake tasks.
-
-task :console do
+desc 'starts the console'
+task 'console' do
   Pry.start
-end
+end 
