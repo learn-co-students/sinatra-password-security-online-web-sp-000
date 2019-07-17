@@ -5,7 +5,7 @@ class ApplicationController < Sinatra::Base
 	configure do
 		set :views, "app/views"
 		enable :sessions
-		set :session_secret, "password_security"
+		set :session_secret, "{SecureRandom.urlsafe_base64}"
 	end
 
 	get "/" do
@@ -17,7 +17,13 @@ class ApplicationController < Sinatra::Base
 	end
 
 	post "/signup" do
-		#your code here!
+		user = User.new(user_params(params))
+
+		if user.save
+			redirect '/login'
+		else
+			redirect '/failure'
+		end
 	end
 
 	get "/login" do
@@ -25,6 +31,15 @@ class ApplicationController < Sinatra::Base
 	end
 
 	post "/login" do
+		user = User.find_by(username: params[:username])
+
+		if user && user.authenticate(params[:password])
+    	session[:user_id] = user.id
+    	redirect "/success"
+  	else
+    	redirect "/failure"
+    end
+
 		#your code here!
 	end
 
@@ -53,6 +68,14 @@ class ApplicationController < Sinatra::Base
 		def current_user
 			User.find(session[:user_id])
 		end
+	end
+
+	private
+	def user_params(params)
+		{
+			:username => params[:name],
+			:password => params[:password]
+		}
 	end
 
 end
