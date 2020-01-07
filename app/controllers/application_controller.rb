@@ -42,7 +42,7 @@ class ApplicationController < Sinatra::Base
 	end
 
 	get "/success" do
-		@user = User.find_by(sessions[:user_id])
+		@user = User.find_by(session[:user_id])
 		if logged_in?
 			erb :success
 		else
