@@ -17,3 +17,6 @@ group :development do
   gem "tux"
 end
 
+
+gem 'standardrb'
+gem 'htmlbeautifier'
