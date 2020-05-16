@@ -16,16 +16,31 @@ class ApplicationController < Sinatra::Base
 		erb :signup
 	end
 
+	# route edited for using bcrypt
 	post "/signup" do
-		#your code here!
+		user = User.new(username: params[:username], password: params[:password])
+
+		if user.save
+			redirect "/login"    # for good UX, this should actually log them in and redirect to user page
+		else
+			redirect "/failure"
+		end
 	end
 
 	get "/login" do
 		erb :login
 	end
 
+	# route edited for using bcrypt
 	post "/login" do
-		#your code here!
+		user = User.find_by(username: params[:username])
+
+		if user && user.authenticate(params[:password])
+			session[:user_id] = user.id
+			redirect "/success"
+		else
+			redirect '/failure'
+		end
 	end
 
 	get "/success" do
@@ -47,11 +62,11 @@ class ApplicationController < Sinatra::Base
 
 	helpers do
 		def logged_in?
-			!!session[user_id]
+			!!session[:user_id]
 		end
 
 		def current_user
-			User.find(session[user_id])
+			User.find(session[:user_id])
 		end
 	end
 
