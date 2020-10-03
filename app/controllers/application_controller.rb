@@ -17,7 +17,21 @@ class ApplicationController < Sinatra::Base
 	end
 
 	post "/signup" do
+
 		#your code here!
+		user = User.new(:username => params[:username], :password => params[:password])
+		#user.save will return false if password field is empty. won't save.
+		#apparently thats due to the has_secure_password macro 
+		
+		if user.save
+			redirect "/login"
+		else
+			redirect "/failure"
+		end
+
+
+		
+		
 	end
 
 	get "/login" do
@@ -26,6 +40,16 @@ class ApplicationController < Sinatra::Base
 
 	post "/login" do
 		#your code here!
+		user = User.find_by(:username => params[:username])
+
+		if user && user.authenticate(params[:password]) #if username found and password matches
+			session[:user_id] = user.id 
+			redirect '/success'
+		else
+			redirect '/failure'
+		end
+
+		
 	end
 
 	get "/success" do
