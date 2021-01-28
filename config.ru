@@ -1,7 +1,12 @@
-require './config/environment'
+ENV['SINATRA_ENV'] ||= "development"
 
-#if ActiveRecord::Base.connection.migration_context.needs_migration?
-#  raise 'Migrations are pending. Run `rake db:migrate` to resolve the issue.'
-#end
+require 'capybara/dsl'
+require 'bundler/setup'
+Bundler.require(:default, ENV['SINATRA_ENV'])
 
-run ApplicationController
+ActiveRecord::Base.establish_connection(
+  :adapter => "sqlite3",
+  :database => "db/#{ENV['SINATRA_ENV']}.sqlite"
+)
+
+require_all 'app'
