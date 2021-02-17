@@ -12,17 +12,17 @@ class ApplicationController < Sinatra::Base
 		erb :index # view has links to signup or login
 	end
 
-	get "/signup" do # renders a form to create a new user. The form includes field for username and password
-		erb :signup
+	get "/signup" do # renders a form to create a new user
+		erb :signup # view includes field for username and password
 	end
 
 	post "/signup" do # even though our database has a column called password_digest, we still access the attribute of password. This is given to us by has_secure_password
 		user = User.new(:username => params[:username], :password => params[:password])
 
 		if user.save # because our user has has_secure_password, we won't be able to save this to the database unless our user filled out the password field.
-			redirect "/login" # calling user.save will return false if the user can't be persisted.
+			redirect "/login" # calling user.save will return true if the user was persisted
 		else
-			redirect "/failure"
+			redirect "/failure" # will return false if the user can't be persisted
 		end
 	end
 
