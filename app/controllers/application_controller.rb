@@ -16,8 +16,14 @@ class ApplicationController < Sinatra::Base
 		erb :signup
 	end
 
-	post "/signup" do
-		#your code here!
+	post "/signup" do # even though our database has a column called password_digest, we still access the attribute of password. This is given to us by has_secure_password
+		user = User.new(:username => params[:username], :password => params[:password])
+
+		if user.save # because our user has has_secure_password, we won't be able to save this to the database unless our user filled out the password field.
+			redirect "/login" # calling user.save will return false if the user can't be persisted.
+		else
+			redirect "/failure"
+		end
 	end
 
 	get "/login" do # renders a form for logging in
@@ -25,7 +31,13 @@ class ApplicationController < Sinatra::Base
 	end
 
 	post "/login" do
-		#your code here!
+		user = User.find_by(:username => params[:username]) # find the user by username
+		if user && user.authenticate(params[:password]) # did we find a User with that username? and is that User authenticated?
+			session[:user_id] = user.id
+			redirect "/success" # if we did redirect to success
+		else
+			redirect "/failure" # if not redirect to failure
+		end
 	end
 
 	get "/success" do # renders success.erb page, which should be displayed once a user successfully logs in
